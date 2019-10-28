@@ -289,7 +289,7 @@ def _local_perm(inputs, targets, is_masked, perm_size, seq_len):
     # `perm_mask` and `target_mask`
     # non-functional tokens
     non_func_tokens = ~(torch.eq(inputs, SEP_ID) | torch.eq(inputs, CLS_ID))
-    is_masked = is_masked.bool()
+    # is_masked = is_masked.bool()
     non_mask_tokens = (~is_masked) & non_func_tokens
     masked_or_func_tokens = ~non_mask_tokens
 
@@ -333,7 +333,12 @@ def make_permute(feature, reuse_len, seq_len, perm_size, num_predict):
 
     inputs = torch.LongTensor(feature.pop("input"))
     target = torch.LongTensor(feature.pop("target"))
-    is_masked = torch.ByteTensor(feature.pop("is_masked"))
+    # is_masked = torch.ByteTensor(feature.pop("is_masked"))
+    get_pop = feature.pop("is_masked").astype(np.uint8)
+
+    # print('get_pop.dtype()', get_pop.dtype)
+    
+    is_masked = torch.ByteTensor(get_pop)
 
     non_reuse_len = seq_len - reuse_len
     assert perm_size <= reuse_len and perm_size <= non_reuse_len
